@@ -1,0 +1,57 @@
+<define PARSE CODE.START/>
+<define TOKEN ( (":"":") ("<""=") (">""=") ) />
+<define KEYWORDS ("hd" "tl" "ref" "not" "and" "or") />
+		
+<code START parse=(CODE.P";") />
+
+<code P parse=(CODE.COMM CODE.P2) />
+<code P2 parse= ((";" CODE.P2)
+		|"" ) />
+
+<code COMM parse=(CODE.LOG CODE.COMM2) />
+<code COMM2 parse=((","CODE.LOG CODE.COMM2)
+		|("")) />
+
+<code LOG parse=(CODE.COMP CODE.LOG2) />
+<code LOG2 parse=(("and"CODE.COMP CODE.LOG2)
+		|("or"CODE.COMP CODE.LOG2)
+		|("") ) />
+		
+<code COMP parse=(CODE.SUM CODE.COMP2) />
+<code COMP2 parse=(("<"CODE.SUM CODE.COMP2)
+		|(">"CODE.SUM CODE.COMP2)
+		|("="CODE.SUM CODE.COMP2)
+		|("<="CODE.SUM CODE.COMP2)
+		|(">="CODE.SUM CODE.COMP2)
+		|("") ) />
+		
+<code SUM parse=(CODE.FACT CODE.SUM2) />
+<code SUM2 parse=(("+" CODE.FACT CODE.SUM2)
+		|("-" CODE.FACT CODE.SUM2) 
+		|("")) />
+		
+<code FACT parse=(CODE.LST CODE.FACT2) />
+<code FACT2 parse=(("*" CODE.LST CODE.FACT2)
+		|("/" CODE.LST CODE.FACT2)
+		|("") ) />
+		
+<code LST parse=(CODE.OP CODE.LST2) />
+<code LST2 parse=(("::" CODE.OP CODE.LST2)
+		|("") ) />
+		
+<code OP parse=(("-" CODE.E)
+		|("hd" CODE.E)
+		|("tl" CODE.E)
+		|("ref" CODE.E)
+		|("!" CODE.E)
+		|("not" CODE.E)
+		|CODE.E ) />
+
+<code E parse=( CONST
+		|("[" "]")
+		|("[" CODE.COMM "]")
+		|("(" CODE.COMM ")") ) />
+		
+<code CONST parse= ( FLOAT
+		|ID
+		|INT ) />

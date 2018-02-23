@@ -1,0 +1,97 @@
+<define PARSE CODE.START/>
+<define TOKEN ( (":"":") ("<""=") (">""=") ("[""]") (":""=") ) />
+<define KEYWORDS ("hd" "tl" "ref" "not" "and" "or" "list" "if" "then" "else" "let" "in" "end" "while" "do") />
+
+<code START parse = (CODE.P ";") />
+
+<code P parse = ((CODE.COMM CODE.P2)
+		|(CODE.E2 CODE.P2) ) />
+<code P2 parse = (";" CODE.P
+		|"" ) />
+
+<code COMM parse=(CODE.LOG CODE.COMM2) />
+<code COMM2 parse=((","CODE.LOG CODE.COMM2)
+		|"") />
+
+<code LOG parse=(CODE.COMP CODE.LOG2) />
+<code LOG2 parse=(("and"CODE.COMP CODE.LOG2)
+		|("or"CODE.COMP CODE.LOG2)
+		|("") ) />
+		
+<code COMP parse=(CODE.SUM CODE.COMP2) />
+<code COMP2 parse=(("<"CODE.SUM CODE.COMP2)
+		|(">"CODE.SUM CODE.COMP2)
+		|("="CODE.SUM CODE.COMP2)
+		|("<="CODE.SUM CODE.COMP2)
+		|(">="CODE.SUM CODE.COMP2)
+		|("") ) />
+		
+<code SUM parse=(CODE.FACT CODE.SUM2) />
+<code SUM2 parse=(("+" CODE.FACT CODE.SUM2)
+		|("-" CODE.FACT CODE.SUM2) 
+		|("")) />
+		
+<code FACT parse=(CODE.LST CODE.FACT2) />
+<code FACT2 parse=(("*" CODE.LST CODE.FACT2)
+		|("/" CODE.LST CODE.FACT2)
+		|("") ) />
+		
+<code LST parse=(CODE.OP CODE.LST2) />
+<code LST2 parse=(("::" CODE.OP CODE.LST2)
+		|("") ) />
+		
+<code OP parse=(("-" CODE.E)
+		|("hd" CODE.E)
+		|("tl" CODE.E)
+		|("ref" CODE.E)
+		|("!" CODE.E)
+		|("not" CODE.E)
+		|CODE.E ) />
+
+<code E parse=(	FLOAT
+		|ID
+		|INT
+		|("["CODE.COMM"]")
+		|("[]")
+		|("("CODE.COMM")") ) />
+
+<code SEMIC parse = (CODE.SEMIC2";") />
+
+<code SEMIC2 parse=(CODE.COMM CODE.SEMIC3) />
+<code SEMIC3 parse= ((";" CODE.COMM CODE.SEMIC3)
+                |("")) />
+
+
+
+
+<code E2 parse = ( ("("CODE.START")") 
+		|CODE.E22  ) />
+<code E22 parse = (("if" CODE.COMM "then" CODE.E23 "else" CODE.E23)
+		|CODE.E23) />
+<code E23 parse = (("let" CODE.C in CODE.START "end")
+		|CODE.E24) />
+<code E24 parse = ((CODE.COMM ":=" CODE.E25)
+		|CODE.E25) />
+<code E25 parse = (("while" CODE.COMM "do" CODE.E26)
+		|CODE.E26 ) />
+<code E26 parse = (CODE.D
+		|CODE.COMM) />
+
+<code D parse = ("val" ID ":" CODE.T "=" CODE.E2) />
+
+<code C parse = (CODE.D CODE.C2) />
+<code C2 parse = ((";"CODE.D CODE.C2)
+		|"") />
+
+<code T parse = (CODE.T2
+		|CODE.T3) />
+<code T2 parse = ("list" T2) />
+<code T3 parse = (CODE.T5
+		|CODE.T7) />
+<code T5 parse = (CODE.T6) />
+<code T6 parse = (("ref" T6)
+		|("list" T6) ) />
+<code T7 parse = (INT
+		|REAL
+		|UNIT
+		|BOOL) />
