@@ -9,6 +9,9 @@
 <code P2 parse = (";" CODE.P
 		|"" ) />
 
+<*Since I have already named all the productions, I am just using the next production to help keep things straight*>
+<code E parse=(CODE.COMM) />
+
 <code COMM parse=(CODE.LOG CODE.COMM2) />
 <code COMM2 parse=((","CODE.LOG CODE.COMM2)
 		|"" ) />
@@ -40,15 +43,15 @@
 <code LST2 parse=(("::" CODE.OP CODE.LST2)
 		|("") ) />
 		
-<code OP parse=(("-" CODE.E)
-		|("hd" CODE.E)
-		|("tl" CODE.E)
-		|("ref" CODE.E)
-		|("!" CODE.E)
-		|("not" CODE.E)
-		|CODE.E ) />
+<code OP parse=(("-" CODE.J)
+		|("hd" CODE.J)
+		|("tl" CODE.J)
+		|("ref" CODE.J)
+		|("!" CODE.J)
+		|("not" CODE.J)
+		|CODE.J ) />
 
-<code E parse=(	FLOAT
+<code J parse=(	FLOAT
 		|ID
 		|INT
 		|("["CODE.COMM"]")
@@ -64,34 +67,34 @@
 
 
 
-<code E2 parse = ( ("("CODE.START")") 
-		|CODE.E22  ) />
-<code E22 parse = (("if" CODE.COMM "then" CODE.E23 "else" CODE.E23)
-		|CODE.E23) />
-<code E23 parse = (("let" CODE.C in CODE.START "end")
-		|CODE.E24) />
-<code E24 parse = ((CODE.COMM ":=" CODE.E25)
-		|CODE.E25) />
-<code E25 parse = (("while" CODE.COMM "do" CODE.E26)
-		|CODE.E26 ) />
-<code E26 parse = (CODE.D
-		|CODE.COMM) />
+<code E2 parse = ( ("("CODE.P")") 
+		|CODE.E3  ) />
+<* I'm not sure if creating a "loop" in this next one will cause an issue *>
+<code E3 parse = (("if" CODE.E "then" CODE.E2 else CODE.E2)
+		|(CODE.E4)  ) />
+<code E4 parse = ("let" CODE.C "in" CODE.P "end") 
+		|(CODE.E5)/>
+<code E5 parse = ((CODE.E ":=" CODE.E2)
+		|(CODE.E6)	)/>
+<code E6 parse = (("while" CODE.E "do" CODE.E2) 
+		|(CODE.E7) )/>
+<code E7 parse = (CODE.D
+		|CODE.E8) />
+<code E8 parse = (CODE.E) />
 
-<code D parse = ("val" ID ":" CODE.T "=" CODE.E2) />
+<code C parse = ((CODE.D CODE.C2)) />
+<code C2 parse = ((";"CODE.D CODE.C)
+		|"" ) />
 
-<code C parse = (CODE.D CODE.C2) />
-<code C2 parse = ((";"CODE.D CODE.C2)
-		|"") />
+<code D parse = ("val" ID ":" CODE.T"="CODE.E2) />
 
-<code T parse = (CODE.T2
+<code T parse = ((CODE.T2 "list")
+		|CODE.T2) />
+<code T2 parse = ((CODE.T3 "ref")
+		|(CODE.T3 "list")
 		|CODE.T3) />
-<code T2 parse = ("list" T2) />
-<code T3 parse = (CODE.T5
-		|CODE.T7) />
-<code T5 parse = (CODE.T6) />
-<code T6 parse = (("ref" T6)
-		|("list" T6) ) />
-<code T7 parse = (INT
+
+<code T3 parse = (INT
 		|REAL
 		|UNIT
 		|BOOL) />
