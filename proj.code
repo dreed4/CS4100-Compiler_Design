@@ -11,12 +11,12 @@
 
 <code COMM parse=(CODE.LOG CODE.COMM2) />
 <code COMM2 parse=((","CODE.LOG CODE.COMM2)
-		|"") />
+		|"" ) />
 
 <code LOG parse=(CODE.COMP CODE.LOG2) />
 <code LOG2 parse=(("and"CODE.COMP CODE.LOG2)
 		|("or"CODE.COMP CODE.LOG2)
-		|("") ) />
+		|"" ) />
 		
 <code COMP parse=(CODE.SUM CODE.COMP2) />
 <code COMP2 parse=(("<"CODE.SUM CODE.COMP2)
