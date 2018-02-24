@@ -1,13 +1,12 @@
 <define PARSE CODE.START/>
 <define TOKEN ( (":"":") ("<""=") (">""=") ("[""]") (":""=") ) />
-<define KEYWORDS ("hd" "tl" "ref" "not" "and" "or" "list" "if" "then" "else" "let" "in" "end" "while" "do") />
+<define KEYWORDS ("hd" "tl" "ref" "not" "and" "or" "list" "if" "then" "else" "let" "in" "end" "while" "do" "val" "real" "unit" "bool") />
 
-<code START parse = (CODE.P ";") />
+<code START parse = (CODE.P";") />
 
-<code P parse = ((CODE.COMM CODE.P2)
-		|(CODE.E2 CODE.P2) ) />
-<code P2 parse = (";" CODE.P
-		|"" ) />
+<code P parse = ((CODE.E2 CODE.P2) ) />
+<code P2 parse = ((";" CODE.P)
+		|";" ) />
 
 <*Since I have already named all the productions, I am just using the next production to help keep things straight*>
 <code E parse=(CODE.COMM) />
@@ -64,13 +63,11 @@
 <code SEMIC3 parse= ((";" CODE.COMM CODE.SEMIC3)
                 |("")) />
 
-
-
-
-<code E2 parse = ( ("("CODE.P")") 
+<code E2 parse = ( ( "("CODE.P")" ) 
 		|CODE.E3  ) />
+
 <* I'm not sure if creating a "loop" in this next one will cause an issue *>
-<code E3 parse = (("if" CODE.E "then" CODE.E2 else CODE.E2)
+<code E3 parse = (("if" CODE.E "then" CODE.E2 "else" CODE.E2)
 		|(CODE.E4)  ) />
 <code E4 parse = ("let" CODE.C "in" CODE.P "end") 
 		|(CODE.E5)/>
@@ -88,13 +85,14 @@
 
 <code D parse = ("val" ID ":" CODE.T"="CODE.E2) />
 
-<code T parse = ((CODE.T2 "list")
-		|CODE.T2) />
-<code T2 parse = ((CODE.T3 "ref")
-		|(CODE.T3 "list")
-		|CODE.T3) />
-
-<code T3 parse = (INT
-		|REAL
-		|UNIT
-		|BOOL) />
+<code T parse = (CODE.T2 CODE.Tp) />
+<code Tp parse = (("list" CODE.Tp)
+		|"" ) />
+<code T2 parse = (CODE.T3 CODE.T2p ) />
+<code T2p parse = (("ref" CODE.T2p)
+		|("list" CODE.T2p)
+		|"" ) />
+<code T3 parse = ("int"
+		|"real"
+		|"unit"
+		|"bool") />
