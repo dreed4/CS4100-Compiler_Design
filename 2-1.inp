@@ -1,0 +1,8 @@
+if ((!x < 4) and (!x > 3)) then
+        z := !z :: !x
+        else
+        x := !x / 2;
+if ((!x = 0) or (!z = [])) then
+        (x := 6 - 1; z := [1])
+        else
+        z := !x :: !z;

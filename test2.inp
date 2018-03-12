@@ -1,1 +1,0 @@
-val a : real real ref ref = ref 2.0;

@@ -1,5 +1,0 @@
-let val a : int ref = ref 2.0 val b = 3 in
-
-    a + b
-
-end;
