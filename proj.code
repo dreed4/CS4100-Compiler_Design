@@ -7,7 +7,7 @@
 <* enumeration of different types *>
 <code IntType match=CODE.Type/>
 <code FloatType match=CODE.Type/>
-<code TypeList#TypeNull match=CODE.Type/>
+<code TypeList match=CODE.Type/>
 
 <code TypeError match=CODE.Type/>
 
