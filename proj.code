@@ -7,6 +7,8 @@
 <* enumeration of different types *>
 <code IntType match=CODE.Type/>
 <code FloatType match=CODE.Type/>
+<code TypeList#TypeNull match=CODE.Type/>
+
 <code TypeError match=CODE.Type/>
 
 
@@ -213,7 +215,7 @@
 
 <code List
     parse =
-        (   "]"
+        (   ("]" eval(return TypeList#TypeNull))
         |   (CODE.Sequential "]")
         )
 />
