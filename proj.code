@@ -8,6 +8,7 @@
 <code IntType match=CODE.Type/>
 <code FloatType match=CODE.Type/>
 <code TypeList match=CODE.Type/>
+<code TypeNull match=CODE.Type/>
 
 <code TypeError match=CODE.Type/>
 
@@ -207,7 +208,8 @@
 		<* this works but it prings quotation marks aroudn the id? Don't
 			 know what's up with that, will fix later*>
 		| (id=ID eval(print("Line " LINE_NO ": Undefined variable:" id);))
-		| ("[" CODE.List)
+		<* needs to return TypeList#ls1, don't know if syntax is right *>
+		| ("[" ls1=CODE.List eval(return (TypeList"#"ls1)))
 		| ("(" CODE.Sequential ")")
 		)
 />
@@ -215,7 +217,10 @@
 
 <code List
     parse =
-        (   ("]" eval(return TypeList#TypeNull))
-        |   (CODE.Sequential "]")
+		<*still need to figure out how to do list of elements*>
+		<*this should return nulltype because empty *>
+        (   ("]" eval(return TypeNull))
+		<* I think this needs to return type of sequential *>
+        |   (t1=CODE.Sequential "]" eval(return t1))
         )
 />
