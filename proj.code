@@ -209,7 +209,7 @@
 			 know what's up with that, will fix later*>
 		| (id=ID eval(print("Line " LINE_NO ": Undefined variable:" id);))
 		<* needs to return TypeList#ls1, don't know if syntax is right *>
-		| ("[" ls1=CODE.List eval(return (TypeList"#"ls1)))
+		| ("[" ls1=CODE.List eval(return (TypeList#ls1)))
 		| ("(" CODE.Sequential ")")
 		)
 />
