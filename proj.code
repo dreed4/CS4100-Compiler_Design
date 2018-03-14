@@ -202,11 +202,13 @@
 	parse =
 		( (INT eval(return IntType))
 		| (FLOAT eval(return FloatType))
-		| (ID eval(print("Line " LINE_NO ": type error: undefined variable: " ID);))
+		<* this works but it prings quotation marks aroudn the id? Don't
+			 know what's up with that, will fix later*>
+		| (id=ID eval(print("Line " LINE_NO ": Undefined variable:" id);))
 		| ("[" CODE.List)
-		| ()
+		| ("(" CODE.Sequential ")")
 		)
-
+/>
 
 
 <code List
