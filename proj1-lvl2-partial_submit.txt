@@ -1,0 +1,108 @@
+Daniel Reed
+Compiler Design
+Project 1 Level 2
+
+Passes 8 tests
+Fails 9 tests
+
+Passing test filename: ~/proj-poet/project1-level2-passing_tests.inp
+Note: not all tests in filename parse correct, as they aren't supposed to 
+
+Passes
+if a = 1 else a + 2;
+
+if b - 3 then b + 5 then a;
+ 
+if (a<b) then c;
+  
+val a : real real ref ref = ref 2.0;
+  
+let val a : int ref = ref 2.0 val b = 3 in
+
+    a + b
+
+end;
+
+val 20 : int = 12 + 8;
+
+let a+b in a end;
+
+while bad do ;
+
+Doesn't Pass
+val t : real list ref = ref [5.5 , 4.5 + 7.6];
+val xyz : int ref = ref 2.9;
+val a : real = if a then b else c;
+val j : bool = not (123/2>3);
+foo := [[ref 5.0]];
+if b - 3 then b + 5 else a;
+if (a + b =3) then a::e else (1+1; b; 5<6);
+
+
+if ((!x < 4) and (!x > 3)) then
+        z := !z :: !x
+        else
+        x := !x / 2;
+if ((!x = 0) or (!z = [])) then
+        (x := 6 - 1; z := [1])
+        else
+        z := !x :: !z;
+		
+while (!i + 10) do
+(
+        i := !i + 1
+);
+
+let val a : int = 1 in
+while (a < 20) do
+(if (a < 10) then
+        if (a > 5) then a := a + 2 else a := a * 2
+        else a := a + 3);
+  a
+end;
+
+
+let val a : real ref = ref 5.5 in
+    let val b : real ref = ref 6.0 in
+        a + b
+    end
+end;
+
+
+let val a : real ref = ref 2.0;  val b : real ref = ref 3.0
+in
+  a := !a + !b;
+  b := !a * !a;
+  b
+end;
+
+
+let val a : real = 1.0; val t : real list ref = ref [5.5 , 4.5 + 7.6] in
+  let val c : real list ref = ref [a+1] ; val k : real ref = ref 3.0 in
+    let val b : real = 3.0; val tmp : real list ref = [] in
+                k = a * b;
+                tmp = tl(t) :: hd(c) :: [k]
+    end
+  end
+end;
+
+
+let val x1 : int = 5; val ab: int ref = ref 3; val y : real = -1.67 in
+        ab := hd(!ab) + y * x;
+        if !ab < 2 and not !ab > 3 then ab := -2 else ab := 3.1415;
+        !ab
+        end;
+		
+		
+let val a : int ref = ref 1
+in
+  while !a < 2 and 3 do a := 4; !a
+end;
+
+
+let val sumlist : int list ref = [1,2,3,4,5];
+    val sum : int ref = ref 0 in
+        while not (!sumlist = []) do
+                sum := !sum + hd(!sumlist);
+        !sum
+end;

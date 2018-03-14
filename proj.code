@@ -4,6 +4,12 @@
 
 <define KEYWORDS ("hd" | "tl" | "ref" | "not" | "and" | "or" | "while" | "do" | "let" | "in" | "end" | "if" | "then" | "else" | "val" | "int" | "real" | "unit" | "bool" | "list")/>
 
+<* enumeration of different types *>
+<code IntType match=CODE.Type/>
+<code FloatType match=CODE.Type/>
+<code TypeError match=CODE.Type/>
+
+
 <code Program
     parse = LIST((CODE.Expression ";"), "\n")
 />
@@ -176,15 +182,32 @@
         )
 />
 
+
+
+<* old *>
+<************************************
 <code Primary
     parse =
-        (   INT
+        (   INT 
         |   FLOAT
         |   ID
         |   ("[" CODE.List)
         |   ("(" CODE.Sequential ")")
         )
 />
+*************************************>
+
+<*new Primary *>
+<code Primary
+	parse =
+		( (INT eval(return IntType))
+		| (FLOAT eval(return FloatType))
+		| (ID eval(print("Line " LINE_NO ": type error: undefined variable: " ID);))
+		| ("[" CODE.List)
+		| ()
+		)
+
+
 
 <code List
     parse =

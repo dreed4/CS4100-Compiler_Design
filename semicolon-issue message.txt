@@ -1,0 +1,256 @@
+My parser used to parse statements with semicolons fine (I even have level 1 submitted). 
+I changed some things and added things to get level 2 working. Some of level 2 works 
+okay with the submit script, but once it gets to something with a semicolon it fails. I
+have, here, a simple example with a semicolon at the end that fails when it should pass.
+I have also copied and pasted my entire grammar at the end.
+
+My start statement and semicolon statements look fine to me, but when it attempts to parse,
+it sort of looks like the semicolon disappears and the parser never goes back to it.
+
+Any help would be greatly appreciated!
+
+Input: a+b; 
+
+Output: 
+
+Reading POET instructions from file proj.pt
+Done reading POET instructions file proj.pt
+Reading POET syntax from file proj.code
+Done reading POET syntax file proj.code
+Reading POET input from stdin
+Done reading POET input file 
+Trying to match CodeVar:START + NULL with ("a" ";" "
+")
+Trying to match POETList:(P ";") + NULL with ("a" ";" "
+")
+Trying to match CodeVar:P + ";" with ("a" ";" "
+")
+Trying to match POETList:(E2 P2) + ";" with ("a" ";" "
+")
+Trying to match CodeVar:E2 + EMPTY with ("a" ";" "
+")
+Trying to match POETTypeTor:("(" P ")")|E3 + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:E3 + EMPTY with ("a" ";" "
+")
+Trying to match POETTypeTor:("if" E "then" E2 "else" E2)|E4 + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:E4 + EMPTY with ("a" ";" "
+")
+Trying to match POETTypeTor:("let" C "in" P "end")|E5 + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:E5 + EMPTY with ("a" ";" "
+")
+Trying to match POETTypeTor:(E ":=" E2)|E6 + EMPTY with ("a" ";" "
+")
+Trying to match POETList:(E ":=" E2) + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:E + ":=" with ("a" ";" "
+")
+Trying to match CodeVar:COMM + ":=" with ("a" ";" "
+")
+Trying to match POETList:(LOG COMM2) + ":=" with ("a" ";" "
+")
+Trying to match CodeVar:LOG + EMPTY with ("a" ";" "
+")
+Trying to match POETList:(COMP LOG2) + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:COMP + EMPTY with ("a" ";" "
+")
+Trying to match POETList:(SUM COMP2) + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:SUM + EMPTY with ("a" ";" "
+")
+Trying to match POETList:(FACT SUM2) + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:FACT + EMPTY with ("a" ";" "
+")
+Trying to match POETList:(LST FACT2) + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:LST + EMPTY with ("a" ";" "
+")
+Trying to match POETList:(OP LST2) + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:OP + EMPTY with ("a" ";" "
+")
+Trying to match POETTypeTor:("-" J)|("hd" J)|("tl" J)|("ref" J)|("!" J)|("not" J)|J + EMPTY with ("a" ";" "
+")
+Trying to match CodeVar:J + EMPTY with ("a" ";" "
+")
+Trying to match POETTypeTor:FLOAT|ID|INT|("[" COMM "]")|"[]"|("(" COMM ")") + EMPTY with ("a" ";" "
+")
+Trying to match POETType:ID + EMPTY with ("a" ";" "
+")
+Matching ID with "a"
+Matching FLOAT|ID|INT|("[" COMM "]")|"[]"|("(" COMM ")") with "a"
+Matching J with "a"
+Matching ("-" J)|("hd" J)|("tl" J)|("ref" J)|("!" J)|("not" J)|J with "a"
+Matching OP with "a"
+Trying to match CodeVar:LST2 + EMPTY with (";" "
+")
+Trying to match POETTypeTor:("::" OP LST2)|"" + EMPTY with (";" "
+")
+Trying to match POETString:"" + EMPTY with (";" "
+")
+Matching "" with ""
+Matching ("::" OP LST2)|"" with ""
+Matching LST2 with ""
+Matching (OP LST2) with ("a" "")
+Matching LST with ("a" "")
+Trying to match CodeVar:FACT2 + EMPTY with (";" "
+")
+Trying to match POETTypeTor:("*" LST FACT2)|("/" LST FACT2)|"" + EMPTY with (";" "
+")
+Trying to match POETString:"" + EMPTY with (";" "
+")
+Matching "" with ""
+Matching ("*" LST FACT2)|("/" LST FACT2)|"" with ""
+Matching FACT2 with ""
+Matching (LST FACT2) with (("a" "") "")
+Matching FACT with (("a" "") "")
+Trying to match CodeVar:SUM2 + EMPTY with (";" "
+")
+Trying to match POETTypeTor:("+" FACT SUM2)|("-" FACT SUM2)|"" + EMPTY with (";" "
+")
+Trying to match POETString:"" + EMPTY with (";" "
+")
+Matching "" with ""
+Matching ("+" FACT SUM2)|("-" FACT SUM2)|"" with ""
+Matching SUM2 with ""
+Matching (FACT SUM2) with ((("a" "") "") "")
+Matching SUM with ((("a" "") "") "")
+Trying to match CodeVar:COMP2 + EMPTY with (";" "
+")
+Trying to match POETTypeTor:("<" SUM COMP2)|(">" SUM COMP2)|("=" SUM COMP2)|("<=" SUM COMP2)|(">=" SUM COMP2)|"" + EMPTY with (";" "
+")
+Trying to match POETString:"" + EMPTY with (";" "
+")
+Matching "" with ""
+Matching ("<" SUM COMP2)|(">" SUM COMP2)|("=" SUM COMP2)|("<=" SUM COMP2)|(">=" SUM COMP2)|"" with ""
+Matching COMP2 with ""
+Matching (SUM COMP2) with (((("a" "") "") "") "")
+Matching COMP with (((("a" "") "") "") "")
+Trying to match CodeVar:LOG2 + EMPTY with (";" "
+")
+Trying to match POETTypeTor:("and" COMP LOG2)|("or" COMP LOG2)|"" + EMPTY with (";" "
+")
+Trying to match POETString:"" + EMPTY with (";" "
+")
+Matching "" with ""
+Matching ("and" COMP LOG2)|("or" COMP LOG2)|"" with ""
+Matching LOG2 with ""
+Matching (COMP LOG2) with ((((("a" "") "") "") "") "")
+Matching LOG with ((((("a" "") "") "") "") "")
+Trying to match CodeVar:COMM2 + ":=" with (";" "
+")
+Trying to match POETTypeTor:("," LOG COMM2)|"" + ":=" with (";" "
+")
+Trying to match POETString:"" + ":=" with (";" "
+")
+Trying to match POETString:":=" + EMPTY with (";" "
+")
+Line 1: syntax error : ;
+
+At line 1 of file proj.pt from <input to=input syntax="proj.code" from=("")/>
+make: *** [run] Error 1
+
+Grammar: 
+
+<define PARSE CODE.START/>
+<define TOKEN ( (":"":") ("<""=") (">""=") ("[""]") (":""=") ) />
+<define KEYWORDS ("hd" "tl" "ref" "not" "and" "or" "list" "if" "then" "else" "let" "in" "end" "while" "do" "val" "real" "unit" "bool") />
+
+<code START parse = (CODE.P";") />
+
+<code P parse = ((CODE.E2 CODE.P2) ) />
+<code P2 parse = ((";" CODE.P)
+		|";" ) />
+
+<*Since I have already named all the productions, I am just using the next production to help keep things straight*>
+<code E parse=(CODE.COMM) />
+
+<code COMM parse=(CODE.LOG CODE.COMM2) />
+<code COMM2 parse=((","CODE.LOG CODE.COMM2)
+		|"" ) />
+
+<code LOG parse=(CODE.COMP CODE.LOG2) />
+<code LOG2 parse=(("and"CODE.COMP CODE.LOG2)
+		|("or"CODE.COMP CODE.LOG2)
+		|"" ) />
+		
+<code COMP parse=(CODE.SUM CODE.COMP2) />
+<code COMP2 parse=(("<"CODE.SUM CODE.COMP2)
+		|(">"CODE.SUM CODE.COMP2)
+		|("="CODE.SUM CODE.COMP2)
+		|("<="CODE.SUM CODE.COMP2)
+		|(">="CODE.SUM CODE.COMP2)
+		|("") ) />
+		
+<code SUM parse=(CODE.FACT CODE.SUM2) />
+<code SUM2 parse=(("+" CODE.FACT CODE.SUM2)
+		|("-" CODE.FACT CODE.SUM2) 
+		|("")) />
+		
+<code FACT parse=(CODE.LST CODE.FACT2) />
+<code FACT2 parse=(("*" CODE.LST CODE.FACT2)
+		|("/" CODE.LST CODE.FACT2)
+		|("") ) />
+		
+<code LST parse=(CODE.OP CODE.LST2) />
+<code LST2 parse=(("::" CODE.OP CODE.LST2)
+		|("") ) />
+		
+<code OP parse=(("-" CODE.J)
+		|("hd" CODE.J)
+		|("tl" CODE.J)
+		|("ref" CODE.J)
+		|("!" CODE.J)
+		|("not" CODE.J)
+		|CODE.J ) />
+
+<code J parse=(	FLOAT
+		|ID
+		|INT
+		|("["CODE.COMM"]")
+		|("[]")
+		|("("CODE.COMM")") ) />
+
+<code SEMIC parse = (CODE.SEMIC2";") />
+
+<code SEMIC2 parse=(CODE.COMM CODE.SEMIC3) />
+<code SEMIC3 parse= ((";" CODE.COMM CODE.SEMIC3)
+                |("")) />
+
+<code E2 parse = ( ( "("CODE.P")" ) 
+		|CODE.E3  ) />
+
+<* I'm not sure if creating a "loop" in this next one will cause an issue *>
+<code E3 parse = (("if" CODE.E "then" CODE.E2 "else" CODE.E2)
+		|(CODE.E4)  ) />
+<code E4 parse = ("let" CODE.C "in" CODE.P "end") 
+		|(CODE.E5)/>
+<code E5 parse = ((CODE.E ":=" CODE.E2)
+		|(CODE.E6)	)/>
+<code E6 parse = (("while" CODE.E "do" CODE.E2) 
+		|(CODE.E7) )/>
+<code E7 parse = (CODE.D
+		|CODE.E8) />
+<code E8 parse = (CODE.E) />
+
+<code C parse = ((CODE.D CODE.C2)) />
+<code C2 parse = ((";"CODE.D CODE.C)
+		|"" ) />
+
+<code D parse = ("val" ID ":" CODE.T"="CODE.E2) />
+
+<code T parse = (CODE.T2 CODE.Tp) />
+<code Tp parse = (("list" CODE.Tp)
+		|"" ) />
+<code T2 parse = (CODE.T3 CODE.T2p ) />
+<code T2p parse = (("ref" CODE.T2p)
+		|("list" CODE.T2p)
+		|"" ) />
+<code T3 parse = ("int"
+		|"real"
+		|"unit"
+		|"bool") />
