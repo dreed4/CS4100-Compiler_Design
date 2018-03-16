@@ -10,6 +10,13 @@
 <code TypeList match=CODE.Type/>
 <code TypeNull match=CODE.Type/>
 
+<*****marked for removal, as this shouldn't be here*****>
+<code IDType match=CODE.Type/>
+<*******************************************************>
+
+<code TypeBool match=CODE.Type/>
+<code TypeError match=CODE.Type/>
+
 <code TypeError match=CODE.Type/>
 
 
@@ -19,7 +26,7 @@
 
 <code Expression
     parse =
-        (   ("(" CODE.Sequence ")")
+        (   ("(" e1=CODE.Sequence ")" eval(return(e1)))
         |   CODE.IfThenElse
         )
 />
@@ -78,7 +85,7 @@
 
 <code Type2
     parse =
-        (   ("ref" CODE.Type2)
+        (   ("ref" t1=CODE.Type2 eval(return(TypeRef#t1)))
         |   ("list" CODE.Type2)
         |   ""
         )
@@ -86,10 +93,10 @@
 
 <code Primitive
     parse =
-        (   "int"
-        |   "real"
-        |   "unit"
-        |   "bool"
+        (   ("int" eval(return TypeInt))
+        |   ("real")
+        |   ("unit")
+        |   ("bool" eval(return TypeBool))
         )
 />
 
@@ -101,116 +108,314 @@
 />
 
 <code Sequential
-    parse = (CODE.Conditional CODE.Sequential2)
+    parse = (s1=CODE.Conditional s2=CODE.Sequential2
+		eval(
+			if(s1!=s2){
+				print("Line " LINE_NO ": type error: all values in list must be of one type");
+				print("  - s1=" s1 "s2=" s2);
+				return(TypeError);
+			}
+			else{
+				return(s1);
+			}
+		)	
+
+	    )
 />
 
 <code Sequential2
     parse =
-        (   ("," CODE.Conditional CODE.Sequential2)
-        |   ""
+        (   
+		("," s1=CODE.Conditional s2=CODE.Sequential2
+	    		eval(
+				if(s1!=s2){
+					print("Line " LINE_NO ": type error: all values in list must be of one type");
+                                	print("  - s1=" s1 "s2=" s2);
+					return(TypeError);
+				}
+				else{
+					return(s1);
+				}
+			
+			)
+	    	)
+	
+        |   ("" eval(return(INHERIT)))
         )
 />
 
 <code Conditional
-    parse = (CODE.Relational CODE.Conditional2)
+    parse = (CODE.Relational c1=CODE.Conditional2 eval(return(c1)))
 />
 
 <code Conditional2
     parse =
-        (   ("and" CODE.Relational CODE.Conditional2)
-        |   ("or" CODE.Relational CODE.Conditional2)
-        |   ""
+        (   
+	    (
+		"and" c1=CODE.Relational
+		eval (
+			if(INHERIT==c1 && INHERIT==TypeBool){
+				return(INHERIT);
+			}
+			else{
+				print("Line " LINE_NO ": type error: " INHERIT " and " c1);
+				return(TypeError);
+			}
+
+
+		)
+		c2=CODE.Conditional2 eval(return(c2))
+	    )
+	|   (
+                "or" c1=CODE.Relational
+                eval (
+                        if(INHERIT==c1 && INHERIT==TypeBool){
+                                return(INHERIT);
+                        }
+                        else{
+                                print("Line " LINE_NO ": type error: " INHERIT " or " c1);
+                                return(TypeError);
+                        }
+
+
+                )
+                c2=CODE.Conditional2 eval(return(c2))
+            )
+	|   (""eval(return(INHERIT)))
         )
 />
 
 <code Relational
-    parse = (CODE.Additive CODE.Relational2)
+    parse = (CODE.Additive r1=CODE.Relational2 eval(return(r1)))
 />
 
 <code Relational2
    parse =
-       (   ("<" CODE.Additive CODE.Relational2)
-       |   (">" CODE.Additive CODE.Relational2)
-       |   ("=" CODE.Additive CODE.Relational2)
-       |   ("<=" CODE.Additive CODE.Relational2)
-       |   (">=" CODE.Additive CODE.Relational2)
-       |   ""
+       (  
+	   (
+	    "<" r1=CODE.Additive
+		eval(
+			if(INHERIT==r1){
+				return(r1);
+			}
+			else{
+				print("Line " LINE_NO ": type error: " INHERIT " < " r1);
+				return(TypeError);
+			}
+			
+		)
+		r2=CODE.Relational2 eval(return(r2))
+	   )
+       |   (
+            ">" r1=CODE.Additive
+                eval(
+                        if(INHERIT==r1){
+                                return(r1);
+                        }
+                        else{
+                                print("Line " LINE_NO ": type error: " INHERIT " > " r1);
+                                return(TypeError);
+                        }
+
+                )
+                r2=CODE.Relational2 eval(return(r2))
+           )
+       |   (
+            "=" r1=CODE.Additive
+                eval(
+                        if(INHERIT==r1){
+                                return(r1);
+                        }
+                        else{
+                                print("Line " LINE_NO ": type error: " INHERIT " = " r1);
+                                return(TypeError);
+                        }
+
+                )
+                r2=CODE.Relational2 eval(return(r2))
+           )
+       |   (
+            "<=" r1=CODE.Additive
+                eval(
+                        if(INHERIT==r1){
+                                return(r1);
+                        }
+                        else{
+                                print("Line " LINE_NO ": type error: " INHERIT " <= " r1);
+                                return(TypeError);
+                        }
+
+                )
+                r2=CODE.Relational2 eval(return(r2))
+           )
+       |   (
+            ">=" r1=CODE.Additive
+                eval(
+                        if(INHERIT==r1){
+                                return(r1);
+                        }
+                        else{
+                                print("Line " LINE_NO ": type error: " INHERIT " >= " r1);
+                                return(TypeError);
+                        }
+
+                )
+                r2=CODE.Relational2 eval(return(r2))
+           )
+       |   ("" eval(return(INHERIT)))
        )
 />
 
 <code Additive
-    parse = (CODE.Multiplicative CODE.Additive2)
+    parse = (CODE.Multiplicative a1=CODE.Additive2 eval(return(a1)))
 />
 
 <code Additive2
     parse =
-        (   ("+" CODE.Multiplicative CODE.Additive2)
-        |   ("-" CODE.Multiplicative CODE.Additive2)
-        |   ""
+        (   
+	    ("+" (a1=CODE.Multiplicative)
+		eval(
+			if(INHERIT==IntType && a1==IntType){
+				return(IntType);	
+			}
+			else if(INHERIT==FloatType && a1==FloatType){
+				return(FloatType);
+			}
+			else{
+				print("Line" LINE_NO ": type error: " INHERIT "+" a1);
+			}
+			
+		)	
+		(a2=CODE.Additive2) eval(return(a2))
+	    )
+        |  ("-" (a1=CODE.Multiplicative)
+                eval(
+                        if(INHERIT==IntType && a1==IntType){
+                                return(IntType);
+                        }
+                        else if(INHERIT==FloatType && a1==FloatType){
+                                return(FloatType);
+                        }
+                        else{
+                                print("Line" LINE_NO ": type error: " INHERIT "-" a1);
+                        }
+
+                )
+                (a2=CODE.Additive2) eval(return(a2))
+            )
+  	|   ("" eval(return(INHERIT)))
         )
 />
 
 <code Multiplicative
-    parse = (CODE.Constructive CODE.Multiplicative2)
+    parse = (CODE.Constructive m=CODE.Multiplicative2 eval(return(m)))
 />
 
 <code Multiplicative2
     parse =
-        (   ("*" CODE.Constructive CODE.Multiplicative2)
-        |   ("/" CODE.Constructive CODE.Multiplicative2)
-        |   ""
+        (  
+	    ("*" (m1=CODE.Constructive)
+                eval(
+                        if(INHERIT==IntType && m1==IntType){
+                                return(IntType);
+                        }
+                        else if(INHERIT==FloatType && m1==FloatType){
+                                return(FloatType);
+                        }
+                        else{
+                                print("Line" LINE_NO ": type error: " INHERIT "*" m1);
+                        }
+
+                )
+                (m2=CODE.Multiplicative2) eval(return(m2))
+            )
+        |   ("/" (m1=CODE.Constructive)
+                eval(
+                        if(INHERIT==IntType && m1==IntType){
+                                return(IntType);
+                        }
+                        else if(INHERIT==FloatType && m1==FloatType){
+                                return(FloatType);
+                        }
+                        else{
+                                print("Line" LINE_NO ": type error: " INHERIT "/" m1);
+                        }
+
+                )
+                (m2=CODE.Multiplicative2) eval(return(m2))
+            )
+        |   ("" eval(return(INHERIT)))
         )
 />
 
 <code Constructive
-    parse = (CODE.Unary CODE.Constructive2)
+    parse = (CODE.Unary c=CODE.Constructive2 eval(return(c)))
 />
 
 <code Constructive2
     parse =
         (   ("::" CODE.Unary CODE.Constructive2)
-        |   ""
+        |   ("" eval(return(INHERIT)))
         )
 />
 
 <code Unary
     parse =
-        (   ("-" CODE.Unary)
-        |   ("hd" CODE.Unary)
-        |   ("tl" CODE.Unary)
-        |   ("ref" CODE.Unary)
-        |   ("!" CODE.Unary)
-        |   ("not" CODE.Unary)
-        |   CODE.Primary
+        (   ("-" u1=CODE.Unary 
+		eval(
+			if(u1!=IntType && u1!=FloatType){ 
+				print("Line " LINE_NO ": type error: '-'" u1); 
+				return(TypeError);
+			}
+			else{
+				return(u1);
+			}
+		)
+	     )
+        |   ("hd" u1=CODE.Unary 
+		eval(
+			return (u1);
+		)
+			
+	    )
+        |   ("tl" u1=CODE.Unary eval(return (u1)))
+        |   ("ref" u1=CODE.Unary eval(return (TypeRef#u1)))
+        |   ("!" u1=CODE.Unary
+		
+					    )
+        |   ("not" u1=CODE.Unary 
+		eval(
+			if(u1!=TypeBool){
+				print("Line " LINE_NO ": type error: 'not'" u1); 
+				return(TypeError);
+			}
+			else{
+				return (u1);
+			}
+		)
+	     )
+        |   (u1=CODE.Primary eval(return(u1)))
         )
 />
 
 
-
-<* old *>
-<************************************
-<code Primary
-    parse =
-        (   INT 
-        |   FLOAT
-        |   ID
-        |   ("[" CODE.List)
-        |   ("(" CODE.Sequential ")")
-        )
-/>
-*************************************>
 
 <*new Primary *>
 <code Primary
 	parse =
-		( (INT eval(return IntType))
-		| (FLOAT eval(return FloatType))
+		( (INT eval(return(IntType)))
+		| (FLOAT eval(return(FloatType)))
 		<* this works but it prings quotation marks aroudn the id? Don't
 			 know what's up with that, will fix later*>
-		| (id=ID eval(print("Line " LINE_NO ": Undefined variable:" id);))
+		| (id=ID 
+			eval(
+				print("Line " LINE_NO ": Undefined variable:" id); 
+				return(IDType);
+			)
+		   )
 		<* needs to return TypeList#ls1, don't know if syntax is right *>
-		| ("[" ls1=CODE.List eval(return (TypeList#ls1)))
-		| ("(" CODE.Sequential ")")
+		| ("[" ls1=CODE.List eval(return(TypeList#ls1)))
+		| ("(" p1=CODE.Sequential ")" eval(return(p1)))
 		)
 />
 
