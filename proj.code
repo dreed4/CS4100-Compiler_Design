@@ -6,7 +6,7 @@
 
 <* enumeration of different types *>
 <code IntType match=CODE.Type/>
-<code FloatType match=CODE.Type/>
+<code TypeFloat match=CODE.Type/>
 <code TypeList match=CODE.Type/>
 <code TypeNull match=CODE.Type/>
 
@@ -278,8 +278,8 @@
 			if(INHERIT==IntType && a1==IntType){
 				return(IntType);	
 			}
-			else if(INHERIT==FloatType && a1==FloatType){
-				return(FloatType);
+			else if(INHERIT==TypeFloat && a1==TypeFloat){
+				return(TypeFloat);
 			}
 			else{
 				print("Line" LINE_NO ": type error: " INHERIT "+" a1);
@@ -293,8 +293,8 @@
                         if(INHERIT==IntType && a1==IntType){
                                 return(IntType);
                         }
-                        else if(INHERIT==FloatType && a1==FloatType){
-                                return(FloatType);
+                        else if(INHERIT==TypeFloat && a1==TypeFloat){
+                                return(TypeFloat);
                         }
                         else{
                                 print("Line" LINE_NO ": type error: " INHERIT "-" a1);
@@ -319,8 +319,8 @@
                         if(INHERIT==IntType && m1==IntType){
                                 return(IntType);
                         }
-                        else if(INHERIT==FloatType && m1==FloatType){
-                                return(FloatType);
+                        else if(INHERIT==TypeFloat && m1==TypeFloat){
+                                return(TypeFloat);
                         }
                         else{
                                 print("Line" LINE_NO ": type error: " INHERIT "*" m1);
