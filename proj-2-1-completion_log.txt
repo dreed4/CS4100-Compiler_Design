@@ -1,0 +1,49 @@
+1. e::=int val : all integer values (e.g., 5, 27) have the TypeInt type; 					X
+---------------------------------------------------------------------------------------------------
+2. e::=float val: all floating point values (e.g., 7.9) have the TypeFloat type.			X
+---------------------------------------------------------------------------------------------------
+3. e::=identifier: all variables must have been declared before used (see above), and		X
+its type is determined by looking up the nested symbol tables; at level 1, you
+do not yet have to implement symbol table support and can simply produce an
+”undefined variable” error for this production.
+---------------------------------------------------------------------------------------------------
+4. e::=[]: an empty list, with T ypeList#T ypeNull being its type.							X
+---------------------------------------------------------------------------------------------------
+5. All list initializations of the form e ::= [e1, e2, ..., en] have type T ypeList#t1,		(Implemented(?) but not working)
+where t1 is the type of the elements inside the pair of []. All expressions
+e1, e2, ..., en must have the same type (t1).
+---------------------------------------------------------------------------------------------------
+6. e::=( e1 ): e has the same type as expression e1.										X
+---------------------------------------------------------------------------------------------------
+7. e::=−e1: e has the same type as e1, which must have TypeInt or TypeFLoat					X
+type,
+---------------------------------------------------------------------------------------------------
+8. e::=hd(e1): e1 must have a type in the form of TypeList#t1 (i.e., it is a list of		UNFINISHED
+t1 elements), and the result of hd(e1) should have type t1.
+1
+---------------------------------------------------------------------------------------------------
+9. e::=tl(e1): e1 must have a type in the form of TypeList#t1 (i.e., it is a list of t1		UNFINISHED
+elements), and the result of tl(e1) should have type TypeList#t1.
+---------------------------------------------------------------------------------------------------
+10. e::=ref e1: e has type TypeRef#t1, where t1 is the type of expression e1.				X
+---------------------------------------------------------------------------------------------------
+11. e::=!(e1): e1 must have a type in the form of TypeRef#t1 (i.e., it is a reference		UNFINISHED
+cell of t1 values), and the result of !(e1) should have type t1.
+---------------------------------------------------------------------------------------------------
+12. e::=not(e1): e1 must have a boolean type TypeBool, and the result of not(e1)			X
+should have the boolean type.	
+---------------------------------------------------------------------------------------------------
+13. e ::= e1 :: e2: e2 must have a type in the form of TypeList#t1, e1 must have			UNFINISHED
+type t1, and the result of e1 :: e2 should have type TypeList#t1.
+---------------------------------------------------------------------------------------------------
+14. e::=e1 op e2, where op could be +, −, ∗, or /: both e1 and e2 must have the same			X
+type of either T ypeInt or T ypeFloat, and the result of the expression should have
+the same type of T ypeInt or T ypeFloat.
+---------------------------------------------------------------------------------------------------
+15. e::=e1 op e2, where op could be =, <, >, <=, or >=, both e1 and e2 must have			X
+the same type, and the result of the expression should have the boolean type
+T ypeBool.
+---------------------------------------------------------------------------------------------------
+16. e::=e1 op e2, where op could be and or or: both e1 and e2 must have the boolean			X
+type, and the result of the expression should have the boolean type.
+---------------------------------------------------------------------------------------------------

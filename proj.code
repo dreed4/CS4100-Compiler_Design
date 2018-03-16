@@ -5,7 +5,7 @@
 <define KEYWORDS ("hd" | "tl" | "ref" | "not" | "and" | "or" | "while" | "do" | "let" | "in" | "end" | "if" | "then" | "else" | "val" | "int" | "real" | "unit" | "bool" | "list")/>
 
 <* enumeration of different types *>
-<code IntType match=CODE.Type/>
+<code TypeInt match=CODE.Type/>
 <code TypeFloat match=CODE.Type/>
 <code TypeList match=CODE.Type/>
 <code TypeNull match=CODE.Type/>
@@ -275,8 +275,8 @@
         (   
 	    ("+" (a1=CODE.Multiplicative)
 		eval(
-			if(INHERIT==IntType && a1==IntType){
-				return(IntType);	
+			if(INHERIT==TypeInt && a1==TypeInt){
+				return(TypeInt);	
 			}
 			else if(INHERIT==TypeFloat && a1==TypeFloat){
 				return(TypeFloat);
@@ -290,8 +290,8 @@
 	    )
         |  ("-" (a1=CODE.Multiplicative)
                 eval(
-                        if(INHERIT==IntType && a1==IntType){
-                                return(IntType);
+                        if(INHERIT==TypeInt && a1==TypeInt){
+                                return(TypeInt);
                         }
                         else if(INHERIT==TypeFloat && a1==TypeFloat){
                                 return(TypeFloat);
@@ -316,8 +316,8 @@
         (  
 	    ("*" (m1=CODE.Constructive)
                 eval(
-                        if(INHERIT==IntType && m1==IntType){
-                                return(IntType);
+                        if(INHERIT==TypeInt && m1==TypeInt){
+                                return(TypeInt);
                         }
                         else if(INHERIT==TypeFloat && m1==TypeFloat){
                                 return(TypeFloat);
@@ -331,11 +331,11 @@
             )
         |   ("/" (m1=CODE.Constructive)
                 eval(
-                        if(INHERIT==IntType && m1==IntType){
-                                return(IntType);
+                        if(INHERIT==TypeInt && m1==TypeInt){
+                                return(TypeInt);
                         }
-                        else if(INHERIT==FloatType && m1==FloatType){
-                                return(FloatType);
+                        else if(INHERIT==TypeFloat && m1==TypeFloat){
+                                return(TypeFloat);
                         }
                         else{
                                 print("Line" LINE_NO ": type error: " INHERIT "/" m1);
@@ -363,7 +363,7 @@
     parse =
         (   ("-" u1=CODE.Unary 
 		eval(
-			if(u1!=IntType && u1!=FloatType){ 
+			if(u1!=TypeInt && u1!=TypeFloat){ 
 				print("Line " LINE_NO ": type error: '-'" u1); 
 				return(TypeError);
 			}
@@ -403,8 +403,8 @@
 <*new Primary *>
 <code Primary
 	parse =
-		( (INT eval(return(IntType)))
-		| (FLOAT eval(return(FloatType)))
+		( (INT eval(return(TypeInt)))
+		| (FLOAT eval(return(TypeFloat)))
 		<* this works but it prings quotation marks aroudn the id? Don't
 			 know what's up with that, will fix later*>
 		| (id=ID 
