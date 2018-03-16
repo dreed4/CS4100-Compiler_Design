@@ -273,37 +273,37 @@
 <code Additive2
     parse =
         (   
-	    ("+" (a1=CODE.Multiplicative)
-		eval(
-			if(INHERIT==TypeInt && a1==TypeInt){
-				return(TypeInt);	
-			}
-			else if(INHERIT==TypeFloat && a1==TypeFloat){
-				return(TypeFloat);
-			}
-			else{
-				print("Line" LINE_NO ": type error: " INHERIT "+" a1);
-			}
-			
-		)	
-		(a2=CODE.Additive2) eval(return(a2))
-	    )
-        |  ("-" (a1=CODE.Multiplicative)
+			("+" (a1=CODE.Multiplicative)
+				eval(
+					if(INHERIT==TypeInt && a1==TypeInt){
+						return(TypeInt);	
+					}
+					else if(INHERIT==TypeFloat && a1==TypeFloat){
+						return(TypeFloat);
+					}
+					else{
+						print("Line" LINE_NO ": type error: " INHERIT "+" a1);
+					}
+				
+				)	
+				(a2=CODE.Additive2) eval(return(a2))
+			)
+		|  ("-" (a1=CODE.Multiplicative)
                 eval(
-                        if(INHERIT==TypeInt && a1==TypeInt){
-                                return(TypeInt);
-                        }
-                        else if(INHERIT==TypeFloat && a1==TypeFloat){
-                                return(TypeFloat);
-                        }
-                        else{
-                                print("Line" LINE_NO ": type error: " INHERIT "-" a1);
-                        }
+					if(INHERIT==TypeInt && a1==TypeInt){
+						return(TypeInt);
+					}
+					else if(INHERIT==TypeFloat && a1==TypeFloat){
+						return(TypeFloat);
+					}
+					else{
+						print("Line" LINE_NO ": type error: " INHERIT "-" a1);
+					}
 
                 )
                 (a2=CODE.Additive2) eval(return(a2))
             )
-  	|   ("" eval(return(INHERIT)))
+		|   ("" eval(return(INHERIT)))
         )
 />
 
@@ -314,32 +314,32 @@
 <code Multiplicative2
     parse =
         (  
-	    ("*" (m1=CODE.Constructive)
-                eval(
-                        if(INHERIT==TypeInt && m1==TypeInt){
-                                return(TypeInt);
-                        }
-                        else if(INHERIT==TypeFloat && m1==TypeFloat){
-                                return(TypeFloat);
-                        }
-                        else{
-                                print("Line" LINE_NO ": type error: " INHERIT "*" m1);
-                        }
+			("*" (m1=CODE.Constructive)
+				eval(
+					if(INHERIT==TypeInt && m1==TypeInt){
+						return(TypeInt);
+					}
+					else if(INHERIT==TypeFloat && m1==TypeFloat){
+						return(TypeFloat);
+					}
+					else{
+						print("Line" LINE_NO ": type error: " INHERIT "*" m1);
+					}
 
-                )
-                (m2=CODE.Multiplicative2) eval(return(m2))
-            )
+				)
+				(m2=CODE.Multiplicative2) eval(return(m2))
+			)
         |   ("/" (m1=CODE.Constructive)
                 eval(
-                        if(INHERIT==TypeInt && m1==TypeInt){
-                                return(TypeInt);
-                        }
-                        else if(INHERIT==TypeFloat && m1==TypeFloat){
-                                return(TypeFloat);
-                        }
-                        else{
-                                print("Line" LINE_NO ": type error: " INHERIT "/" m1);
-                        }
+                    if(INHERIT==TypeInt && m1==TypeInt){
+                        return(TypeInt);
+                    }
+                    else if(INHERIT==TypeFloat && m1==TypeFloat){
+                        return(TypeFloat);
+                    }
+                    else{
+                        print("Line" LINE_NO ": type error: " INHERIT "/" m1);
+                    }
 
                 )
                 (m2=CODE.Multiplicative2) eval(return(m2))
@@ -361,39 +361,37 @@
 
 <code Unary
     parse =
-        (   ("-" u1=CODE.Unary 
-		eval(
-			if(u1!=TypeInt && u1!=TypeFloat){ 
-				print("Line " LINE_NO ": type error: '-'" u1); 
-				return(TypeError);
-			}
-			else{
-				return(u1);
-			}
-		)
-	     )
+        (   
+			("-" u1=CODE.Unary 
+				eval(
+					if(u1!=TypeInt && u1!=TypeFloat){ 
+						print("Line " LINE_NO ": type error: '-'" u1); 
+						return(TypeError);
+					}
+					else{
+						return(u1);
+					}
+				)
+			)
         |   ("hd" u1=CODE.Unary 
-		eval(
-			return (u1);
-		)
-			
-	    )
+				eval(
+					return (u1);
+				)
+			)
         |   ("tl" u1=CODE.Unary eval(return (u1)))
         |   ("ref" u1=CODE.Unary eval(return (TypeRef#u1)))
-        |   ("!" u1=CODE.Unary
-		
-					    )
+        |   ("!" u1=CODE.Unary)
         |   ("not" u1=CODE.Unary 
-		eval(
-			if(u1!=TypeBool){
-				print("Line " LINE_NO ": type error: 'not'" u1); 
-				return(TypeError);
-			}
-			else{
-				return (u1);
-			}
-		)
-	     )
+				eval(
+					if(u1!=TypeBool){
+						print("Line " LINE_NO ": type error: 'not'" u1); 
+						return(TypeError);
+					}
+					else{
+						return (u1);
+					}
+				)
+			)
         |   (u1=CODE.Primary eval(return(u1)))
         )
 />
@@ -403,29 +401,30 @@
 <*new Primary *>
 <code Primary
 	parse =
-		( (INT eval(return(TypeInt)))
-		| (FLOAT eval(return(TypeFloat)))
-		<* this works but it prings quotation marks aroudn the id? Don't
-			 know what's up with that, will fix later*>
-		| (id=ID 
-			eval(
-				print("Line " LINE_NO ": Undefined variable:" id); 
-				return(IDType);
+		( 
+			(INT eval(return(TypeInt)))
+		| 	(FLOAT eval(return(TypeFloat)))
+			<* this works but it prings quotation marks around the id? Don't know what's up with that, will fix later*>
+		|	(id=ID 
+				eval(
+					print("Line " LINE_NO ": Undefined variable:" id); 
+					return(IDType);
+				)
 			)
-		   )
-		<* needs to return TypeList#ls1, don't know if syntax is right *>
-		| ("[" ls1=CODE.List eval(return(TypeList#ls1)))
-		| ("(" p1=CODE.Sequential ")" eval(return(p1)))
+			<* needs to return TypeList#ls1, don't know if syntax is right *>
+		|	("[" ls1=CODE.List eval(return(TypeList#ls1)))
+		|	("(" p1=CODE.Sequential ")" eval(return(p1)))
 		)
 />
 
 
 <code List
     parse =
-		<*still need to figure out how to do list of elements*>
-		<*this should return nulltype because empty *>
-        (   ("]" eval(return TypeNull))
-		<* I think this needs to return type of sequential *>
+			<*still need to figure out how to do list of elements*>
+			<*this should return nulltype because empty *>
+        (   
+			("]" eval(return TypeNull))
+			<* I think this needs to return type of sequential *>
         |   (t1=CODE.Sequential "]" eval(return t1))
         )
 />
