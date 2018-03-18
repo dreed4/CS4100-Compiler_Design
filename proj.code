@@ -270,40 +270,9 @@
 
 <code Additive2
     parse =
-        (   
-			(
-				"+" (a1=CODE.Multiplicative)
-				eval(
-					if(INHERIT==TypeInt && a1==TypeInt){
-						return(TypeInt);	
-					}
-					else if(INHERIT==TypeFloat && a1==TypeFloat){
-						return(TypeFloat);
-					}
-					else{
-						print("Line" LINE_NO ": type error: " INHERIT "+" a1);
-					}
-				
-				)	
-				a2=CODE.Additive2 eval(return(a2))
-			)
-		|  (
-				"-" (a1=CODE.Multiplicative)
-                eval(
-					if(INHERIT==TypeInt && a1==TypeInt){
-						return(TypeInt);
-					}
-					else if(INHERIT==TypeFloat && a1==TypeFloat){
-						return(TypeFloat);
-					}
-					else{
-						print("Line" LINE_NO ": type error: " INHERIT "-" a1);
-					}
-
-                )
-                a2=CODE.Additive2 eval(return(a2))
-            )
-		|   ("" eval(return(INHERIT)))
+        (   ("+" CODE.Multiplicative CODE.Additive2)
+        |   ("-" CODE.Multiplicative CODE.Additive2)
+        |   ""
         )
 />
 
