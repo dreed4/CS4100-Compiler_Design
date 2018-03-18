@@ -316,9 +316,40 @@
 
 <code Multiplicative2
     parse =
-        (   ("*" CODE.Constructive CODE.Multiplicative2)
-        |   ("/" CODE.Constructive CODE.Multiplicative2)
-        |   ""
+        (  
+			(
+				"*" (m1=CODE.Constructive)
+				eval(
+					if(INHERIT==TypeInt && m1==TypeInt){
+						return(TypeInt);
+					}
+					else if(INHERIT==TypeFloat && m1==TypeFloat){
+						return(TypeFloat);
+					}
+					else{
+						print("Line" LINE_NO ": type error: " INHERIT "*" m1);
+					}
+
+				)
+				(m2=CODE.Multiplicative2) eval(return(m2))
+			)
+        |   (
+				"/" (m1=CODE.Constructive)
+                eval(
+                    if(INHERIT==TypeInt && m1==TypeInt){
+                        return(TypeInt);
+                    }
+                    else if(INHERIT==TypeFloat && m1==TypeFloat){
+                        return(TypeFloat);
+                    }
+                    else{
+                        print("Line" LINE_NO ": type error: " INHERIT "/" m1);
+                    }
+
+                )
+                (m2=CODE.Multiplicative2) eval(return(m2))
+            )
+        |   ("" eval(return(INHERIT)))
         )
 />
 
