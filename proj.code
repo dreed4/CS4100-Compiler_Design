@@ -276,10 +276,10 @@
 			"+" (a1=CODE.Multiplicative)
 			eval(
 				if(INHERIT==TypeInt && a1==TypeInt){
-					return(TypeInt);	
+					TypeInt	
 				}
 				else if(INHERIT==TypeFloat && a1==TypeFloat){
-					return(TypeFloat);
+					TypeFloat
 				}
 				else{
 					print("Line " LINE_NO ": type error: " INHERIT "+" a1);
@@ -289,20 +289,21 @@
 			(a2=CODE.Additive2) eval(return(a2))
 		)
 	|  (
-			"-" (a1=CODE.Multiplicative)
+			("-" (a3=CODE.Multiplicative))
 			eval(
-				if(INHERIT==TypeInt && a1==TypeInt){
-					return(TypeInt);
+				if(INHERIT==TypeInt && a3==TypeInt){
+					TypeInt
 				}
-				else if(INHERIT==TypeFloat && a1==TypeFloat){
-					return(TypeFloat);
+				else if(INHERIT==TypeFloat && a3==TypeFloat){
+					TypeFloat
 				}
 				else{
-					print("Line " LINE_NO ": type error: " INHERIT "-" a1);
+					print("Line " LINE_NO ": type error: " INHERIT "-" a3);
+					CODE.TypeError
 				}
 
 			)
-			(a2=CODE.Additive2) eval(return(a2))
+			(a4=CODE.Additive2) eval(return(a4))
 		)
 	|   ("" eval(return(INHERIT)))
     )
@@ -310,7 +311,7 @@
 
 <code Multiplicative
     parse = (
-		CODE.Constructive (m1=CODE.Multiplicative2) eval(return(m1))
+		CODE.Constructive (m=CODE.Multiplicative2) eval(return(m))
 	)
 />
 
@@ -319,14 +320,14 @@
 		(
 			"*" (m1=CODE.Constructive) 
 			eval(
-				if(INHERIT==TypeInt && m1==TypeInt){
-					return(TypeInt);
-				}
-				else if(INHERIT==TypeFloat && m1==TypeFloat){
-					return(TypeFloat);
-				}
+				if(INHERIT==TypeInt && m1==TypeInt){TypeInt}
+				else if(INHERIT==TypeFloat && m1==TypeFloat){TypeFloat}
 				else{
 					print("Line " LINE_NO ": type error: " INHERIT "*" m1);
+					if((INHERIT==TypeFloat && m2==TypeInt)||(INHERIT==TypeInt &&$
+                                                TypeFloat
+                                        }
+                                        else{CODE.TypeError}
 				}
 				
 			)
@@ -334,20 +335,24 @@
 		
 		)
 	|   (
-			"/" (m1=CODE.Constructive) 
+			"/" (m2=CODE.Constructive) 
 			eval(
-				if(INHERIT==TypeInt && m1==TypeInt){
-					return(TypeInt);
+				if(INHERIT==TypeInt && m2==TypeInt){
+					TypeInt
 				}
-				else if(INHERIT==TypeFloat && m1==TypeFloat){
-					return(TypeFloat);
+				else if(INHERIT==TypeFloat && m2==TypeFloat){
+					TypeFloat
 				}
 				else{
-					print("Line " LINE_NO ": type error: " INHERIT "*" m1);
+					print("Line " LINE_NO ": type error: " INHERIT "*" m2);
+					if((INHERIT==TypeFloat && m2==TypeInt)||(INHERIT==TypeInt && m2==TypeFloat)){
+						TypeFloat
+					}
+					else{CODE.TypeError}
 				}
 				
 			)
-			(m2=CODE.Multiplicative2) eval(return(m2))
+			(m3=CODE.Multiplicative2) eval(return(m3))
 			
 		)
 	|   ("" eval(return(INHERIT)))
