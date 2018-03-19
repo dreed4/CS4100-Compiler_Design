@@ -324,7 +324,7 @@
 				else if(INHERIT==TypeFloat && m1==TypeFloat){TypeFloat}
 				else{
 					print("Line " LINE_NO ": type error: " INHERIT "*" m1);
-					if((INHERIT==TypeFloat && m2==TypeInt)||(INHERIT==TypeInt &&$
+					if((INHERIT==TypeFloat && m2==TypeInt)||(INHERIT==TypeInt && m2==TypeFloat)){
                                                 TypeFloat
                                         }
                                         else{CODE.TypeError}
