@@ -19,6 +19,9 @@
 
 <code TypeError match=CODE.Type/>
 
+<code TypeList pars=(elemtype) />
+<code TypeRef pars=(elemtype) />
+
 
 <code Program
     parse = LIST((CODE.Expression ";"), "\n")
@@ -156,8 +159,11 @@
 			(
 				"and" c1=CODE.Relational
 				eval (
+					if(INHERIT==TypeError || c1==TypeError){
+						return(TypeBool);
+					}
 					if(INHERIT==c1 && INHERIT==TypeBool){
-						return(INHERIT);
+						return(TypeBool);
 					}
 					else{
 						print("Line " LINE_NO ": type error: " INHERIT " and " c1);
@@ -169,8 +175,11 @@
 		|   (
                 "or" c1=CODE.Relational
                 eval (
+					if(INHERIT==TypeError || c1==TypeError){
+                                                return(TypeBool);
+                                        }
 					if(INHERIT==c1 && INHERIT==TypeBool){
-							return(INHERIT);
+							return(TypeBool);
 					}
 					else{
 							print("Line " LINE_NO ": type error: " INHERIT " or " c1);
@@ -191,74 +200,134 @@
    parse =
        (  
 		   (
-				"<" r1=CODE.Additive
+				"<" r2=CODE.Additive
 				eval(
-					if(INHERIT==r1){
-						return(r1);
+					if((INHERIT==TypeError && r2!=TypeError)|| (INHERIT!=TypeError && r2==TypeError)){
+						if(INHERIT==TypeError){
+							INHERIT=r2;
+						}
+						else{
+							r2=INHERIT;
+						}
 					}
+					else if(INHERIT==TypeError && r2==TypeError){
+						return(TypeBool);
+					}
+					
+					if(INHERIT==r2){
+						return(TypeBool);
+					}				
 					else{
-						print("Line " LINE_NO ": type error: " INHERIT " < " r1);
+						print("Line " LINE_NO ": type error: " INHERIT " < " r2);
 						return(TypeError);
 					}
 					
 				)
-				r2=CODE.Relational2 eval(return(r2))
+				r3=CODE.Relational2 eval(return(r3))
 		   )
 		|  (
-				">" r1=CODE.Additive
-                eval(
-					if(INHERIT==r1){
-						return(r1);
+				">" r2=CODE.Additive
+                	eval(
+					if((INHERIT==TypeError && r2!=TypeError)|| (INHERIT!=TypeError && r2==TypeError)){
+                                                if(INHERIT==TypeError){
+                                                        INHERIT=r2;
+                                                }
+                                                else{
+                                                        r2=INHERIT;
+                                                }
+                                        }
+                                        else if(INHERIT==TypeError && r2==TypeError){
+                                                return(TypeBool);
+                                        }
+					if(INHERIT==r2){
+						return(TypeBool);
 					}
 					else{
-						print("Line " LINE_NO ": type error: " INHERIT " > " r1);
+						print("Line " LINE_NO ": type error: " INHERIT " > " r2);
+						return(TypeError);
+					}
+
+                	)
+                r5=CODE.Relational2 eval(return(r5))
+           )
+       |   (
+				"=" r2=CODE.Additive
+                eval(
+					if((INHERIT==TypeError && r2!=TypeError)|| (INHERIT!=TypeError && r2==TypeError)){
+                                                if(INHERIT==TypeError){
+                                                        INHERIT=r2;
+                                                }
+                                                else{
+                                                        r2=INHERIT;
+                                                }
+                                        }
+                                        else if(INHERIT==TypeError && r2==TypeError){
+                                                return(TypeBool);
+                                        }
+
+	
+
+					if(INHERIT==r2){
+						return(TypeBool);
+					}
+					else{
+						print("Line " LINE_NO ": type error: " INHERIT " = " r2);
 						return(TypeError);
 					}
 
                 )
-                r2=CODE.Relational2 eval(return(r2))
+                r7=CODE.Relational2 eval(return(r7))
            )
        |   (
-				"=" r1=CODE.Additive
+				"<=" r2=CODE.Additive
                 eval(
-					if(INHERIT==r1){
-						return(r1);
+
+					if((INHERIT==TypeError && r2!=TypeError)|| (INHERIT!=TypeError && r2==TypeError)){
+                                                if(INHERIT==TypeError){
+                                                        INHERIT=r2;
+                                                }
+                                                else{
+                                                        r2=INHERIT;
+                                                }
+                                        }
+                                        else if(INHERIT==TypeError && r2==TypeError){
+                                                return(TypeBool);
+                                        }
+					if(INHERIT==r2){
+						return(TypeBool);
 					}
 					else{
-						print("Line " LINE_NO ": type error: " INHERIT " = " r1);
+						print("Line " LINE_NO ": type error: " INHERIT " <= " r2);
 						return(TypeError);
 					}
 
                 )
-                r2=CODE.Relational2 eval(return(r2))
+                r9=CODE.Relational2 eval(return(r9))
            )
        |   (
-				"<=" r1=CODE.Additive
+				">=" r2=CODE.Additive
                 eval(
-					if(INHERIT==r1){
-						return(r1);
+					if((INHERIT==TypeError && r2!=TypeError)|| (INHERIT!=TypeError && r2==TypeError)){
+                                                if(INHERIT==TypeError){
+                                                        INHERIT=r2;
+                                                }
+                                                else{
+                                                        r2=INHERIT;
+                                                }
+                                        }
+                                        else if(INHERIT==TypeError && r2==TypeError){
+                                                return(TypeBool);
+                                        }
+					if(INHERIT==r2){
+							return(TypeBool);
 					}
 					else{
-						print("Line " LINE_NO ": type error: " INHERIT " <= " r1);
-						return(TypeError);
-					}
-
-                )
-                r2=CODE.Relational2 eval(return(r2))
-           )
-       |   (
-				">=" r1=CODE.Additive
-                eval(
-					if(INHERIT==r1){
-							return(r1);
-					}
-					else{
-							print("Line " LINE_NO ": type error: " INHERIT " >= " r1);
+							print("Line " LINE_NO ": type error: " INHERIT " >= " r2);
 							return(TypeError);
 					}
 
                 )
-                r2=CODE.Relational2 eval(return(r2))
+                (r11=CODE.Relational2) eval(return(TypeBool))
            )
        |   ("" eval(return(INHERIT)))
 	)
@@ -281,6 +350,13 @@
 				else if(INHERIT==TypeFloat && a1==TypeFloat){
 					TypeFloat
 				}
+				<* removing error propagation here *>
+				else if(a1==TypeError){
+                                        if(INHERIT == TypeInt){TypeInt}
+					else if(INHERIT == TypeFloat){TypeFloat}
+					else{TypeError}
+                                }
+				
 				else{
 					print("Line " LINE_NO ": type error: " INHERIT "+" a1);
 				}
@@ -297,6 +373,15 @@
 				else if(INHERIT==TypeFloat && a3==TypeFloat){
 					TypeFloat
 				}
+				
+				<* removing error propagation here *>
+                                else if(INHERIT==TypeInt && a3==TypeError){
+                                        TypeInt
+                                }
+                                else if(INHERIT==TypeFloat && a3==TypeError){
+                                        TypeFloat
+                                }
+				<********************>
 				else{
 					print("Line " LINE_NO ": type error: " INHERIT "-" a3);
 					CODE.TypeError
@@ -324,10 +409,10 @@
 				else if(INHERIT==TypeFloat && m1==TypeFloat){TypeFloat}
 				else{
 					print("Line " LINE_NO ": type error: " INHERIT "*" m1);
-					if((INHERIT==TypeFloat && m2==TypeInt)||(INHERIT==TypeInt && m2==TypeFloat)){
+					if((INHERIT==TypeFloat && m1==TypeInt)||(INHERIT==TypeInt && m1==TypeFloat)){
                                                 TypeFloat
                                         }
-                                        else{CODE.TypeError}
+                                        else{TypeError}
 				}
 				
 			)
@@ -348,7 +433,7 @@
 					if((INHERIT==TypeFloat && m2==TypeInt)||(INHERIT==TypeInt && m2==TypeFloat)){
 						TypeFloat
 					}
-					else{CODE.TypeError}
+					else{TypeError}
 				}
 				
 			)
@@ -374,11 +459,11 @@
     parse =
         (   
 			(
-				"-" u1=CODE.Unary 
+				"-" (u1=CODE.Unary) 
 				eval(
 					if(u1!=TypeInt && u1!=TypeFloat){ 
 						print("Line " LINE_NO ": type error: '-'" u1); 
-						return(TypeError);
+						TypeError
 					}
 					else{
 						return(u1);
@@ -386,27 +471,54 @@
 				)
 			)
         |   (
-				"hd" u1=CODE.Unary 
-				eval(
-					return (u1);
-				)
-			)
-        |   ("tl" u1=CODE.Unary eval(return (u1)))
-        |   ("ref" u1=CODE.Unary eval(return (TypeRef#u1)))
+		"hd" (u1=CODE.Unary) 
+		eval(
+			if(!(u1 : TypeList#(lt)) ){
+				print("Line " LINE_NO ": type error: hd " u1);
+				lt=TypeError;
+				return(lt);
+			}
+			else{
+				return(lt);
+			}
+		)
+	    )
+        |   (
+		"tl" (u2=CODE.Unary) 
+		eval(
+			if( !(u2 : TypeList#(lt2)) ){
+				print("Line " LINE_NO ": type error: tl " u2);
+				lt2=TypeError;
+			}
+			else{
+				<*is this the right way to do this?*>
+				return(u2);
+			}
+		)
+	    )
+        |   ("ref" u1=CODE.Unary eval(return(TypeRef#u1)))
         |   ("!" u1=CODE.Unary)
         |   (
-				"not" u1=CODE.Unary 
-				eval(
-					if(u1!=TypeBool){
-						print("Line " LINE_NO ": type error: 'not'" u1); 
-						return(TypeError);
-					}
-					else{
-						return (u1);
-					}
-				)
-			)
-        |   (u1=CODE.Primary eval(return(u1)))
+		"not" (u1=CODE.Unary) 
+		eval(
+			if(u1!=TypeBool){
+				if (u1!=TypeError){
+					print("Line " LINE_NO ": type error: 'not'" u1); 
+					return(TypeError)
+				}
+				else{
+					u1=TypeBool;
+					return(TypeBool)
+				}
+			}
+			else{
+				return(u1);
+			}
+		)
+	    )
+        |   (
+		(u1=CODE.Primary) eval(return(u1))
+	    )
         )
 />
 
@@ -420,15 +532,19 @@
 		| 	(FLOAT eval(return(TypeFloat)))
 			<* this works but it prings quotation marks around the id? Don't know what's up with that, will fix later*>
 		|	(
-				id=ID 
+				id=ID
 				eval(
-					print("Line " LINE_NO ": Undefined variable:" id); 
-					return(IDType);
+					print("Line " LINE_NO ": type error: undefined variable:" id); 
+					return(TypeError);
 				)
 			)
 			<* needs to return TypeList#ls1, don't know if syntax is right *>
-		|	("[" ls1=CODE.List eval(return(TypeList#ls1)))
-		|	("(" p1=CODE.Sequential ")" eval(return(p1)))
+		|	(
+				("[" ls1=CODE.List) eval(return(TypeList#ls1))
+			)
+		|	(
+				("(" p1=CODE.Sequential ")") eval(return(p1))
+			)
 		)
 />
 
@@ -438,8 +554,12 @@
 			<*still need to figure out how to do list of elements*>
 			<*this should return nulltype because empty *>
         (   
-			("]" eval(return TypeNull))
+			(
+				("]") eval(return(TypeNull))
+			)
 			<* I think this needs to return type of sequential *>
-        |   (t1=CODE.Sequential "]" eval(return t1))
+        |   (
+		(t1=CODE.Sequential "]") eval(return(t1))
+	    )
         )
 />
