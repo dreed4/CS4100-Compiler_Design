@@ -1,0 +1,235 @@
+<define PARSE CODE.Program/>
+
+<define TOKEN ((":" ":") ("<" "=") (">" "=") (":" "="))/>
+
+<define KEYWORDS ("hd" | "tl" | "ref" | "not" | "and" | "or" | "while" | "do" | "let" | "in" | "end" | "if" | "then" | "else" | "val" | "int" | "real" | "unit" | "bool" | "list")/>
+
+<*********************>
+<*project 3 stuff*>
+<*becuase I'm building on Project 1 code, I don't have any type*>
+<*so each ATTR is a struct with only exp*>
+<code ATTR pars=(exp)/>
+
+<* representation of whole program *>
+<code Program
+	pars=(program:LIST((CODE.Expression ";"), "\n"))
+	parse=(program eval(return(Program#program)))
+/>
+
+<* ExpStmt is a type of AST node and it is a struct with two member vars: *>
+<* exp and its type*>
+
+<code PExpStmt
+	pars=(exp : CODE.Expression)
+	parse=(exp ";" eval(return(PExpStmt#(exp[ATTR.exp]))))
+/>
+
+
+<*SeqStmt is a type of AST node and is a struct with *>
+<code SeqStmt
+	pars=()
+	parse=()
+
+/>
+
+<*subtype of Additive because it will deal with addition and sub*>
+<code BopAddSub pars=(op, opd1, opd2) match=CODE.Additive/>
+
+<*subtype of multiplicative to do multipy and divide*>
+<code BopAddMultDiv pars=(op, opd1, opd2) match=CODE.Multiplicative/>
+
+
+
+
+<***********************>
+
+<code Program
+    parse = (LIST((CODE.Expression ";"), "\n"))
+    
+/>
+
+<code Expression
+    pars=()
+    parse =
+        (   ("(" CODE.Sequence ")")
+        |   CODE.IfThenElse
+        )
+/>
+
+<code Sequence
+    parse = (CODE.Expression CODE.Sequence2)
+/>
+
+<code Sequence2
+    parse =
+        (   (";" CODE.Expression CODE.Sequence2)
+        |   ""
+        )
+/>
+
+<code IfThenElse
+    parse =
+        (   ("if" CODE.Sequential "then" CODE.Expression "else" CODE.Expression)
+        |   CODE.LetIn
+        )
+/>
+
+<code LetIn
+    parse =
+        (   ("let" CODE.Definitions "in" CODE.Sequence "end")
+        |   CODE.While
+        )
+/>
+
+<code Definitions
+    parse = (CODE.Definition CODE.Definitions2)
+/>
+
+<code Definitions2
+    parse =
+        (   (";" CODE.Definition CODE.Definitions2)
+        |   ""
+        )
+/>
+
+<code While
+    parse =
+        (   ("while" CODE.Sequential "do" CODE.Expression)
+        |   CODE.Definition
+        |   (CODE.Sequential CODE.Assignment)
+        )
+/>
+
+<code Definition
+    parse = ("val" ID ":" CODE.Type "=" CODE.Expression)
+/>
+
+<code Type
+    parse = (CODE.Primitive CODE.Type2)
+/>
+
+<code Type2
+    parse =
+        (   ("ref" CODE.Type2)
+        |   ("list" CODE.Type2)
+        |   ""
+        )
+/>
+
+<code Primitive
+    parse =
+        (   "int"
+        |   "real"
+        |   "unit"
+        |   "bool"
+        )
+/>
+
+<code Assignment
+    parse =
+        (   (":=" CODE.Expression)
+        |   ""
+        )
+/>
+
+<code Sequential
+    parse = (CODE.Conditional CODE.Sequential2)
+/>
+
+<code Sequential2
+    parse =
+        (   ("," CODE.Conditional CODE.Sequential2)
+        |   ""
+        )
+/>
+
+<code Conditional
+    parse = (CODE.Relational CODE.Conditional2)
+/>
+
+<code Conditional2
+    parse =
+        (   ("and" CODE.Relational CODE.Conditional2)
+        |   ("or" CODE.Relational CODE.Conditional2)
+        |   ""
+        )
+/>
+
+<code Relational
+    parse = (CODE.Additive CODE.Relational2)
+/>
+
+<code Relational2
+   parse =
+       (   ("<" CODE.Additive CODE.Relational2)
+       |   (">" CODE.Additive CODE.Relational2)
+       |   ("=" CODE.Additive CODE.Relational2)
+       |   ("<=" CODE.Additive CODE.Relational2)
+       |   (">=" CODE.Additive CODE.Relational2)
+       |   ""
+       )
+/>
+
+<code Additive
+    parse = (CODE.Multiplicative CODE.Additive2)
+/>
+
+<code Additive2
+    parse =
+        (   ("+" CODE.Multiplicative CODE.Additive2)
+        |   ("-" CODE.Multiplicative CODE.Additive2)
+        |   ""
+        )
+/>
+
+<code Multiplicative
+    parse = (CODE.Constructive CODE.Multiplicative2)
+/>
+
+<code Multiplicative2
+    parse =
+        (   ("*" CODE.Constructive CODE.Multiplicative2)
+        |   ("/" CODE.Constructive CODE.Multiplicative2)
+        |   ""
+        )
+/>
+
+<code Constructive
+    parse = (CODE.Unary CODE.Constructive2)
+/>
+
+<code Constructive2
+    parse =
+        (   ("::" CODE.Unary CODE.Constructive2)
+        |   ""
+        )
+/>
+
+<code Unary
+    parse =
+        (   ("-" CODE.Unary)
+        |   ("hd" CODE.Unary)
+        |   ("tl" CODE.Unary)
+        |   ("ref" CODE.Unary)
+        |   ("!" CODE.Unary)
+        |   ("not" CODE.Unary)
+        |   CODE.Primary
+        )
+/>
+
+<code Primary
+    parse =
+        (   INT
+        |   FLOAT
+        |   ID
+        |   ("[" CODE.List)
+        |   ("(" CODE.Sequential ")")
+        )
+/>
+
+<code List
+    parse =
+        (   "]"
+        |   (CODE.Sequential "]")
+        )
+/>
