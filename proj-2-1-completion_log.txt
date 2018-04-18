@@ -1,3 +1,48 @@
+Daniel Reed
+Compiler Design
+Project 2 - Completion
+
+Most of Level 1 of Project 2 is complete. However, I am unable to run all the 
+way through the submission script, as on the input:
+	hd([2.2])  + tl([3,4]);
+
+	not hd(1) < 2 or hd(1) = 2;
+
+	!(ref 2) :: [2,3,4];
+
+I am receiving the following output:
+
+	Line 1: type error: TypeFloat+TypeList#TypeInt
+	Line 3: type error: hd TypeInt
+	Line 3: type error: TypeBool < TypeInt
+	Line 3: type error: hd TypeInt
+	Line5: type error: TypeInt::TypeList#TypeInt
+	
+I should only be getting the output:
+	Line 1: type error: TypeFloat + TypeList#TypeInt
+	Line 3: type error: hd TypeInt
+	Line 3: type error: hd TypeInt
+	
+Incorrect ouput is:
+	Line 3: type error: TypeBool < TypeInt
+		-- 	I have tried really hard to debug this, but I can't figure this out!
+	
+	Line5: type error: TypeInt::TypeList#TypeInt
+		-- 	I'm not quest sure why (ref 2) is returning a type int, because it 
+			shouldn't be.
+			
+I can not run the last inputs for the submission script, as the script doesn't 
+make it there and the output I get from running the make command runs too long 
+for me to scroll up to check all output.
+
+I have at least attempted to implement every portion of Level 1, but it is 
+clearly lacking in true functionality, despite the attempt. I will possibly 
+attempt to finish more to turn the project in late, but this is all that can 
+be done for now.
+
+Specific Level 1 Requirements Completion (clearly not all work, based on submission script, 
+	but all have been attempted):
+---------------------------------------------------------------------------------------------------
 1. e::=int val : all integer values (e.g., 5, 27) have the TypeInt type; 					X
 ---------------------------------------------------------------------------------------------------
 2. e::=float val: all floating point values (e.g., 7.9) have the TypeFloat type.			X
@@ -9,7 +54,7 @@ do not yet have to implement symbol table support and can simply produce an
 ---------------------------------------------------------------------------------------------------
 4. e::=[]: an empty list, with T ypeList#T ypeNull being its type.							X
 ---------------------------------------------------------------------------------------------------
-5. All list initializations of the form e ::= [e1, e2, ..., en] have type T ypeList#t1,		(Implemented(?) but not working)
+5. All list initializations of the form e ::= [e1, e2, ..., en] have type TypeList#t1,		X
 where t1 is the type of the elements inside the pair of []. All expressions
 e1, e2, ..., en must have the same type (t1).
 ---------------------------------------------------------------------------------------------------
@@ -18,22 +63,22 @@ e1, e2, ..., en must have the same type (t1).
 7. e::=−e1: e has the same type as e1, which must have TypeInt or TypeFLoat					X
 type,
 ---------------------------------------------------------------------------------------------------
-8. e::=hd(e1): e1 must have a type in the form of TypeList#t1 (i.e., it is a list of		UNFINISHED
+8. e::=hd(e1): e1 must have a type in the form of TypeList#t1 (i.e., it is a list of		x
 t1 elements), and the result of hd(e1) should have type t1.
 1
 ---------------------------------------------------------------------------------------------------
-9. e::=tl(e1): e1 must have a type in the form of TypeList#t1 (i.e., it is a list of t1		UNFINISHED
+9. e::=tl(e1): e1 must have a type in the form of TypeList#t1 (i.e., it is a list of t1		x
 elements), and the result of tl(e1) should have type TypeList#t1.
 ---------------------------------------------------------------------------------------------------
-10. e::=ref e1: e has type TypeRef#t1, where t1 is the type of expression e1.				X
+10. e::=ref e1: e has type TypeRef#t1, where t1 is the type of expression e1.				x
 ---------------------------------------------------------------------------------------------------
-11. e::=!(e1): e1 must have a type in the form of TypeRef#t1 (i.e., it is a reference		UNFINISHED
+11. e::=!(e1): e1 must have a type in the form of TypeRef#t1 (i.e., it is a reference		x
 cell of t1 values), and the result of !(e1) should have type t1.
 ---------------------------------------------------------------------------------------------------
 12. e::=not(e1): e1 must have a boolean type TypeBool, and the result of not(e1)			X
 should have the boolean type.	
 ---------------------------------------------------------------------------------------------------
-13. e ::= e1 :: e2: e2 must have a type in the form of TypeList#t1, e1 must have			UNFINISHED
+13. e ::= e1 :: e2: e2 must have a type in the form of TypeList#t1, e1 must have			x
 type t1, and the result of e1 :: e2 should have type TypeList#t1.
 ---------------------------------------------------------------------------------------------------
 14. e::=e1 op e2, where op could be +, −, ∗, or /: both e1 and e2 must have the same			X
@@ -42,7 +87,7 @@ the same type of T ypeInt or T ypeFloat.
 ---------------------------------------------------------------------------------------------------
 15. e::=e1 op e2, where op could be =, <, >, <=, or >=, both e1 and e2 must have			X
 the same type, and the result of the expression should have the boolean type
-T ypeBool.
+TypeBool.
 ---------------------------------------------------------------------------------------------------
 16. e::=e1 op e2, where op could be and or or: both e1 and e2 must have the boolean			X
 type, and the result of the expression should have the boolean type.
