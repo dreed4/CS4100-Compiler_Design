@@ -1,0 +1,59 @@
+<define symTable MAP(ID,"int"|"float"|"") />
+
+
+
+<input syntax="proj.code" from="" to=input/>
+
+
+
+
+
+<xform LookupVariable pars=(varName)  symTableList=GLOBAL.symTable >
+  for ( p = symTableList; p != NULL; p = TAIL(p)) {
+     curTable = HEAD(p);
+     res = curTable[varName];
+     if (res != "") RETURN res;
+  }
+</xform>
+
+<xform LookupLocalVariable pars=(varName) symTableList=GLOBAL.symTable >
+	curTable = HEAD(symTableList);
+	res = curTable[varName];
+	if(res != "") RETURN res;
+</xform>
+
+<xform insert_entry pars=(id,type) symTableList=GLOBAL.symTable >
+  (HEAD(symTableList))[id]=type;
+  ""
+</xform>
+
+<xform pop_scope >
+  top = HEAD(GLOBAL.symTable);
+  GLOBAL.symTable = TAIL(GLOBAL.symTable);
+  top
+</xform>
+
+<xform push_scope>
+  GLOBAL.symTable = MAP{} :: GLOBAL.symTable;
+</xform>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<eval print "parsing successful."/>

@@ -1,0 +1,315 @@
+<define PARSE CODE.Program/>
+
+<define TOKEN ((":" ":") ("<" "=") (">" "=") (":" "="))/>
+
+<define KEYWORDS ("hd" | "tl" | "ref" | "not" | "and" | "or" | "while" | "do" | "let" | "in" | "end" | "if" | "then" | "else" | "val" | "int" | "real" | "unit" | "bool" | "list")/>
+
+<code IntType match=CODE.Type/>
+<code FloatType match=CODE.Type/>
+<code TypeError match=CODE.Type/>
+<code BoolType match=CODE.Type/>
+<code NullType match=CODE.Type/>
+
+<*********************>
+<*project 3 stuff*>
+<*becuase I'm building on Project 1 code, I don't have any type*>
+<*so each ATTR is a struct with only exp*>
+<code ATTR pars=(exp, type)/>
+
+<* representation of whole program *>
+<code Program
+	pars=(program:LIST((CODE.Expression ";"), "\n"))
+	parse=(program eval(return(Program#program)))
+/>
+
+<* ExpStmt is a type of AST node and it is a struct with two member vars: *>
+<* exp and its type*>
+<code ExpStmt
+	pars=(exp : CODE.Expression)
+	parse=(exp eval(return(PExpStmt#())))
+/>
+
+
+<*SeqStmt is a type of AST node and is a struct with *>
+<code SeqStmt
+	pars=()
+	parse=()
+
+/>
+
+<*subtype of Additive because it will deal with addition and sub*>
+<code BopAddSub pars=(op, opd1, opd2) match=CODE.Additive/>
+
+<*subtype of multiplicative to do multipy and divide*>
+<code BopMultDiv pars=(op, opd1, opd2) match=CODE.Multiplicative/>
+
+<code BopRel pars=(op, opd1, opd2) match=CODE.Relational/>
+
+<code BopCond pars=(op, opd1, opd2) match=CODE.Conditional/>
+
+<code BopConstr pars=(op,opd1,opd2) match=CODE.Constructive/>
+
+<***********************>
+
+
+<*marked for deletion because this should be dealt with already*>
+
+<code Expression
+    pars=()
+    parse =
+        (   ("(" CODE.Sequence ")")
+        |   CODE.IfThenElse
+        )
+/>
+
+<code Sequence
+    parse = (CODE.Expression CODE.Sequence2)
+/>
+
+<code Sequence2
+    parse =
+        (   (";" CODE.Expression CODE.Sequence2)
+        |   ""
+        )
+/>
+
+<code IfThenElse
+    parse =
+        (   ("if" CODE.Sequential "then" CODE.Expression "else" CODE.Expression)
+        |   CODE.LetIn
+        )
+/>
+
+<code LetIn
+    parse =
+        (   ("let" CODE.Definitions "in" CODE.Sequence "end")
+        |   CODE.While
+        )
+/>
+
+<code Definitions
+    parse = (CODE.Definition CODE.Definitions2)
+/>
+
+<code Definitions2
+    parse =
+        (   (";" CODE.Definition CODE.Definitions2)
+        |   ""
+        )
+/>
+
+<code While
+    parse =
+        (   ("while" CODE.Sequential "do" CODE.Expression)
+        |   CODE.Definition
+        |   (CODE.Sequential CODE.Assignment)
+        )
+/>
+
+<code Definition
+    parse = ("val" ID ":" CODE.Type "=" CODE.Expression)
+/>
+
+<code Type
+    parse = (CODE.Primitive CODE.Type2)
+/>
+
+<code Type2
+    parse =
+        (   ("ref" CODE.Type2)
+        |   ("list" CODE.Type2)
+        |   ""
+        )
+/>
+
+<code Primitive
+    parse =
+        (   "int"
+        |   "real"
+        |   "unit"
+        |   "bool"
+        )
+/>
+
+<code Assignment
+    parse =
+        (   (":=" CODE.Expression)
+        |   ""
+        )
+/>
+
+<code Sequential
+    parse = (CODE.Conditional CODE.Sequential2)
+/>
+
+<code Sequential2
+    parse =
+        (   ("," CODE.Conditional CODE.Sequential2)
+        |   ""
+        )
+/>
+
+<code Conditional
+    parse = (CODE.Relational (e1=CODE.Conditional2) eval(return(e1)))
+/>
+
+<code Conditional2
+    parse =
+        (   ("and" (e1=CODE.Relational) 
+				eval(
+					ATTR#(BopCond#("and", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Conditional2) eval(return(e2))
+			)
+        |   ("or" (e1=CODE.Relational) 
+				eval(
+					ATTR#(BopCond#("or", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Conditional2) eval(return(e2)))
+        |   ""
+        )
+/>
+
+<code Relational
+    parse = (CODE.Additive (e1=CODE.Relational2) eval(return(e1)))
+/>
+
+<code Relational2
+   parse =
+       (   ("<" (e1=CODE.Additive) 
+				eval(
+					ATTR#(BopRel#("<", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Relational2) eval(return(e2))
+	   
+			)
+       |   (">" (e1=CODE.Additive) 
+				eval(
+					ATTR#(BopRel#(">", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Relational2) eval(return(e2))
+	   
+			)
+       |   ("=" (e1=CODE.Additive) 
+				eval(
+					ATTR#(BopRel#("=", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Relational2) eval(return(e2))
+	   
+			)
+       |   ("<=" (e1=CODE.Additive) 
+				eval(
+					ATTR#(BopRel#("<=", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Relational2) eval(return(e2))
+	   
+	   
+			)
+       |   (">=" (e1=CODE.Additive) 
+				eval(
+					ATTR#(BopRel#(">=", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.BoolType)
+				)
+				(e2=CODE.Relational2) eval(return(e2))
+	   
+			)
+       |   ""
+       )
+/>
+
+<code Additive
+    parse = (CODE.Multiplicative (e1=CODE.Additive2) eval(return(e1)))
+/>
+
+<code Additive2
+    parse =
+        (   (
+				"+" (e1=CODE.Multiplicative)
+				eval(
+					ATTR#(BopAddSub#("+", INHERIT[ATTR.exp], e1[ATTR.exp]),CODE.IntType)
+				)
+				(e2=CODE.Additive2) eval(return(e2))
+			
+			)
+        |   (
+				"-" (CODE.Multiplicative) 
+				eval(
+					ATTR#(BopAddSub#("-", INHERIT[ATTR.exp], e1[ATTR.exp]), CODE.IntType)
+				)
+		
+				(CODE.Additive2) eval(return(e2))
+			)
+        |   ""
+        )
+/>
+
+<code Multiplicative
+    parse = (CODE.Constructive (e1=CODE.Multiplicative2) eval(return(e1)))
+/>
+
+<code Multiplicative2
+    parse =
+        (   
+			("*" (e1=CODE.Constructive) 
+				eval(
+					ATTR#(BopMultDiv#("*",INHERIT[ATTR.exp], e1[ATTR.exp]), CODE.IntType)
+				)
+				
+				(e2=CODE.Multiplicative2) eval(return(e2))
+			)
+        |   ("/" (CODE.Constructive)
+				eval(
+					ATTR#(BopMultDiv#("/", INHERIT[ATTR.exp], e1[ATTR.exp]), CODE.IntType)
+				)
+				
+				(e2=CODE.Multiplicative2) eval(return(e2))
+			
+			)
+        |   ""
+        )
+/>
+
+<code Constructive
+    parse = (CODE.Unary (e1=CODE.Constructive2)  eval(return(e1)))
+/>
+
+<code Constructive2
+    parse =
+        (   
+			("::" (CODE.Unary) 
+				
+					
+				(CODE.Constructive2)
+			)	
+			
+        |   ""
+        )
+/>
+
+<code Unary
+    parse =
+        (   ("-" CODE.Unary)
+        |   ("hd" CODE.Unary)
+        |   ("tl" CODE.Unary)
+        |   ("ref" CODE.Unary)
+        |   ("!" CODE.Unary)
+        |   ("not" CODE.Unary)
+        |   CODE.Primary
+        )
+/>
+
+<code Primary
+    parse =
+        (   INT
+        |   FLOAT
+        |   ID
+        |   ("[" CODE.List)
+        |   ("(" CODE.Sequential ")")
+        )
+/>
+
+<code List
+    parse =
+        (   "]"
+        |   (CODE.Sequential "]")
+        )
+/>
